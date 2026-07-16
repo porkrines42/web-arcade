@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const VERSION = '1.6.0';
+  const VERSION = '1.7.0';
   const SETTINGS_KEY = 'webArcade.settings';
   const PONG_KEY = 'webArcade.pong';
   const STATS_KEY = 'webArcade.stats';
@@ -83,8 +83,8 @@
   function registerServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
     const manifest = document.querySelector('link[rel="manifest"]'); if (!manifest) return;
-    const workerUrl = new URL('service-worker.js', manifest.href);
-    navigator.serviceWorker.register(workerUrl, { scope: new URL('./', manifest.href).pathname }).then(registration => {
+    const workerUrl = new URL(manifest.dataset.serviceWorker || 'service-worker.js', manifest.href);
+    navigator.serviceWorker.register(workerUrl, { scope: new URL(manifest.dataset.serviceWorkerScope || './', manifest.href).pathname }).then(registration => {
       if (registration.waiting) showUpdate(registration.waiting);
       registration.addEventListener('updatefound', () => { const worker = registration.installing; if (worker) worker.addEventListener('statechange', () => { if (worker.state === 'installed' && navigator.serviceWorker.controller) showUpdate(worker); }); });
       let refreshing = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { refreshing = true; window.location.reload(); } });

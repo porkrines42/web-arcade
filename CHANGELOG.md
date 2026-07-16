@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.7.0 — Mobile Pong cabinet
+
+- Made Pong install as its own landscape-oriented standalone app, while keeping it under the root offline service worker.
+- Added a phone-rotation prompt, landscape game-cabinet layout, and fullscreen request where the browser supports it.
+
 ## Version 1.6.0 — Phase 1 polish complete
 
 - Added safe-area-aware mobile layouts, larger controls, scrollable dialogs, responsive Pong layouts, and orientation-safe pausing.
