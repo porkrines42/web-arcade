@@ -1,0 +1,1 @@
+{"name":"Web Arcade","short_name":"Arcade","description":"A small collection of neon browser games.","start_url":"./","scope":"./","display":"standalone","background_color":"#09061d","theme_color":"#09061d","icons":[{"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
