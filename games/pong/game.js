@@ -18,7 +18,7 @@
     normal: { speed: 405, reaction: .14, error: 24, awayError: 12 },
     hard: { speed: 515, reaction: .055, error: 9, awayError: 4 }
   };
-  let difficulty = localStorage.getItem('web-arcade-pong-difficulty') || 'normal';
+  let difficulty = (window.WebArcade && WebArcade.getDefaultDifficulty ? WebArcade.getDefaultDifficulty() : localStorage.getItem('web-arcade-pong-difficulty')) || 'normal';
   let running = false, paused = false, gameOver = false, animation, audio, lastTime = 0;
   let cpuTarget = H / 2, cpuThinkTime = 0, impactFlash = { player: 0, cpu: 0 }, scoreFlash = 0;
   const state = {
@@ -33,7 +33,7 @@
     const oscillator = audio.createOscillator(), gain = audio.createGain();
     oscillator.type = type === 'score' ? 'square' : 'sine';
     oscillator.frequency.value = type === 'score' ? 180 : type === 'hit' ? 480 : 330;
-    gain.gain.setValueAtTime(.06, audio.currentTime);
+    gain.gain.setValueAtTime(.06 * (window.WebArcade && WebArcade.getVolume ? WebArcade.getVolume() : 1), audio.currentTime);
     gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .11);
     oscillator.connect(gain).connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .12);
   }
@@ -41,9 +41,9 @@
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
   function randomRange(amount) { return (Math.random() * 2 - 1) * amount; }
 
-  function setDifficulty(level) {
+  function setDifficulty(level, persist = true) {
     difficulty = levels[level] ? level : 'normal';
-    localStorage.setItem('web-arcade-pong-difficulty', difficulty);
+    if (persist && window.WebArcade && WebArcade.savePongPreferences) WebArcade.savePongPreferences({ difficulty }); else if (persist) localStorage.setItem('web-arcade-pong-difficulty', difficulty);
     document.querySelectorAll('[data-level]').forEach(button => button.classList.toggle('active', button.dataset.level === difficulty));
     cpuThinkTime = 0;
   }
@@ -67,7 +67,7 @@
   function score(player) {
     if (player) state.playerScore++; else state.cpuScore++;
     ui.player.textContent = state.playerScore; ui.cpu.textContent = state.cpuScore;
-    scoreFlash = .28; shell.classList.remove('score-flash'); void shell.offsetWidth; shell.classList.add('score-flash'); sound('score');
+    scoreFlash = .28; if (!(window.WebArcade && WebArcade.getMotionMode && WebArcade.getMotionMode() === 'off')) { shell.classList.remove('score-flash'); void shell.offsetWidth; shell.classList.add('score-flash'); } sound('score');
     if (state.playerScore === 7 || state.cpuScore === 7) {
       running = false; gameOver = true; ui.pause.disabled = true; ui.overlay.hidden = false;
       const win = state.playerScore === 7;
@@ -144,11 +144,12 @@
   }
 
   function draw() {
-    ctx.clearRect(0, 0, W, H); ctx.fillStyle = scoreFlash ? '#17103d' : '#0b0923'; ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = '#5e538833'; ctx.setLineDash([12, 15]); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]);
-    ctx.shadowBlur = impactFlash.player ? 32 : 18; ctx.shadowColor = '#22e6ff'; ctx.fillStyle = '#dffcff'; ctx.fillRect(paddle.x, state.playerY, paddle.w, paddle.h);
-    ctx.shadowBlur = impactFlash.cpu ? 32 : 18; ctx.shadowColor = '#ff3ed1'; ctx.fillStyle = '#ffd9f5'; ctx.fillRect(W - paddle.x - paddle.w, state.cpuY, paddle.w, paddle.h);
-    ctx.shadowColor = '#bcff3f'; ctx.fillStyle = '#bcff3f'; ctx.beginPath(); ctx.arc(state.ball.x, state.ball.y, state.ball.r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    const colors = getComputedStyle(document.documentElement); const bg = colors.getPropertyValue('--arcade-bg').trim() || '#0b0923'; const cyan = colors.getPropertyValue('--arcade-cyan').trim() || '#22e6ff'; const pink = colors.getPropertyValue('--arcade-pink').trim() || '#ff3ed1'; const lime = colors.getPropertyValue('--arcade-lime').trim() || '#bcff3f';
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = scoreFlash ? '#17103d' : bg; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = cyan + '55'; ctx.setLineDash([12, 15]); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]);
+    ctx.shadowBlur = impactFlash.player ? 32 : 18; ctx.shadowColor = cyan; ctx.fillStyle = '#dffcff'; ctx.fillRect(paddle.x, state.playerY, paddle.w, paddle.h);
+    ctx.shadowBlur = impactFlash.cpu ? 32 : 18; ctx.shadowColor = pink; ctx.fillStyle = '#ffd9f5'; ctx.fillRect(W - paddle.x - paddle.w, state.cpuY, paddle.w, paddle.h);
+    ctx.shadowColor = lime; ctx.fillStyle = lime; ctx.beginPath(); ctx.arc(state.ball.x, state.ball.y, state.ball.r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
   }
 
   function loop(time) {
@@ -168,6 +169,6 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) pause(); });
   canvas.addEventListener('mousemove', setPaddleFromPointer); canvas.addEventListener('touchstart', event => { setPaddleFromPointer(event); event.preventDefault(); }, { passive: false }); canvas.addEventListener('touchmove', event => { setPaddleFromPointer(event); event.preventDefault(); }, { passive: false });
   [['up', -1], ['down', 1]].forEach(([id, direction]) => { const button = document.getElementById(id); const key = direction === -1 ? 'arrowup' : 'arrowdown'; const startMove = event => { event.preventDefault(); keys.add(key); }; const stopMove = () => keys.delete(key); button.addEventListener('pointerdown', startMove); ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => button.addEventListener(type, stopMove)); });
-  setDifficulty(difficulty); resetBall(); draw(); animation = requestAnimationFrame(loop);
+  setDifficulty(difficulty, false); resetBall(); draw(); animation = requestAnimationFrame(loop);
   if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('../../service-worker.js', { scope: '../../' }));
 })();

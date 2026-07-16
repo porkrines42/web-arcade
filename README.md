@@ -23,6 +23,10 @@ Open the home page and select **Play** on the Pong card. Keep the ball in play w
 
 Visit the deployed site once while online, then use your browser's **Install app** or **Add to Home Screen** control. The service worker caches the home page, Pong, icons, and supporting files so both screens work offline afterward.
 
+## Settings Center
+
+Use **Settings** from the home page or Pong header to manage global sound and volume, motion, theme, and the default Pong difficulty. Choices are saved locally and shared between the arcade and Pong. On iPhone, install through Safari’s **Share → Add to Home Screen** option. The Settings Center also offers clearly confirmed options to reset settings, Pong preferences, or all local Web Arcade data.
+
 ## Publish with GitHub Pages
 
 1. Push this repository to GitHub.

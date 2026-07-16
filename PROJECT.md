@@ -4,6 +4,10 @@
 
 Web Arcade is a small, welcoming collection of quick browser games. It should feel like a pocket arcade cabinet: fast to open, clear to use, playable with a range of inputs, and available even after the connection drops. Pong is the first cabinet; the home page is designed to make future games feel like part of one product.
 
+## Design philosophy
+
+The home page should feel like a polished, premium browser-gaming platform without losing its lightweight character: deep, high-contrast surfaces, restrained neon accents, strong card hierarchy, and system typography. Motion should add atmosphere rather than distract, and must always respect reduced-motion preferences. Product claims and statistics must be factual; the arcade is free, private, account-free, and offline-ready after its first successful load.
+
 ## Architecture
 
 The project intentionally uses plain HTML, CSS, and vanilla JavaScript. There is no build step, package manager, framework, CDN, analytics service, API, or database. Files can be deployed directly from the repository root to GitHub Pages.
@@ -22,7 +26,7 @@ Create a folder under `games/` with an `index.html`, styles, and script. Add an 
 
 ## Shared UI and storage
 
-Use `shared/arcade.css` for shared visual tokens, header/footer, controls, status chips, and focus behavior. Use `shared/arcade.js` for the version label, network indicator, install prompt, and the `web-arcade-muted` localStorage preference. Game-specific preferences should use a clearly named `web-arcade-<game>-<setting>` key. Do not add third-party code to shared files.
+Use `shared/arcade.css` for shared visual tokens, header/footer, controls, status chips, settings modal, and focus behavior. `shared/arcade.js` provides the version label, network indicator, and install prompt; `shared/settings.js` provides the arcade-wide Settings Center. Settings are stored in `webArcade.settings`, while Pong-specific choices live in `webArcade.pong`; the settings helper safely reads legacy `web-arcade-*` preferences without deleting them. Do not add third-party code to shared files.
 
 ## Accessibility and mobile
 
