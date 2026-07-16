@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.5.0 — Local statistics and achievements
+
+- Added local-only Pong match, point, streak, difficulty, date, and active-play-time statistics with safe versioned storage.
+- Added eight gameplay-earned Pong achievements, accessible unlock notices, progress views, polished empty states, and confirmed reset controls.
+- Added shared statistics and achievement modules to the offline cache and documented local data conventions.
+
 ## Version 1.4.0 — Settings Center completion
 
 - Completed the shared Settings Center with validated persistent preferences, app status and install guidance, keyboard focus return, and confirmed data controls.

@@ -24,6 +24,10 @@ Open the home page and select **Play** on the Pong card. Keep the ball in play w
 
 Use **Settings** on the home page or in Pong to save global sound and volume, animation, theme, and default Pong difficulty preferences. Settings stay on the device. Pong keeps its own selected difficulty once you choose one, and the center provides confirmed controls to reset settings, Pong preferences, or all Web Arcade data.
 
+## Local statistics and achievements
+
+Pong records matches, points, win streaks, difficulty results, approximate active play time, and achievements in `localStorage`. This information stays only in the current browser on the current device; it is never sent anywhere. Open **View progress** from the home page to review it. The Settings Center has confirmed controls to reset Pong statistics and achievements or clear all Web Arcade data.
+
 ## Install the PWA
 
 Visit the deployed site once while online, then use your browser's **Install app** or **Add to Home Screen** control. The service worker caches the home page, Pong, icons, and supporting files so both screens work offline afterward.

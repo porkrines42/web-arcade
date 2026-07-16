@@ -20,6 +20,7 @@
   };
   let difficulty = window.WebArcade.getPongDifficulty();
   let running = false, paused = false, gameOver = false, animation, audio, lastTime = 0;
+  let match = null;
   let cpuTarget = H / 2, cpuThinkTime = 0, impactFlash = { player: 0, cpu: 0 }, scoreFlash = 0;
   const state = {
     playerY: (H - paddle.h) / 2, cpuY: (H - paddle.h) / 2,
@@ -58,6 +59,7 @@
   }
 
   function resetMatch() {
+    match = null;
     state.playerScore = state.cpuScore = 0;
     state.playerY = state.cpuY = (H - paddle.h) / 2;
     ui.player.textContent = '0'; ui.cpu.textContent = '0'; gameOver = false;
@@ -66,6 +68,8 @@
 
   function score(player) {
     if (player) state.playerScore++; else state.cpuScore++;
+    WebArcadeStats.pongPoint(player);
+    if (match) match.maxDeficit = Math.max(match.maxDeficit, state.cpuScore - state.playerScore);
     ui.player.textContent = state.playerScore; ui.cpu.textContent = state.cpuScore;
     scoreFlash = .28; shell.classList.remove('score-flash'); void shell.offsetWidth; shell.classList.add('score-flash'); sound('score');
     if (state.playerScore === 7 || state.cpuScore === 7) {
@@ -74,6 +78,12 @@
       ui.title.textContent = win ? 'YOU WIN!' : 'CPU WINS';
       ui.copy.textContent = win ? 'A perfect neon rally. Ready for another round?' : 'The CPU got there first. Give it another serve.';
       ui.action.textContent = 'Play again';
+      if (match && !match.completed) {
+        match.completed = true;
+        const result = { won: win, playerScore: state.playerScore, cpuScore: state.cpuScore, difficulty: match.difficulty, maxDeficit: match.maxDeficit, playTimeSeconds: match.playTimeSeconds };
+        WebArcadeStats.pongComplete(result);
+        WebArcadeAchievements.evaluate('complete', result);
+      }
       return;
     }
     resetBall(player ? -1 : 1);
@@ -137,6 +147,7 @@
 
   function update(dt) {
     if (!running || paused) return;
+    if (match) match.playTimeSeconds += dt;
     if (keys.has('w') || keys.has('arrowup')) movePlayer(-1, dt);
     if (keys.has('s') || keys.has('arrowdown')) movePlayer(1, dt);
     updateCpu(dt); updateBall(dt);
@@ -157,7 +168,7 @@
     const dt = Math.min((time - lastTime) / 1000 || 0, .035); lastTime = time;
     update(dt); draw(); animation = requestAnimationFrame(loop);
   }
-  function start() { if (gameOver) resetMatch(); running = true; paused = false; lastTime = performance.now(); ui.overlay.hidden = true; ui.pause.disabled = false; ui.pause.textContent = 'Pause'; }
+  function start() { if (gameOver) resetMatch(); if (!match) { match = { difficulty, maxDeficit: 0, playTimeSeconds: 0, completed: false }; WebArcadeStats.pongStart(); WebArcadeAchievements.evaluate('start'); } running = true; paused = false; lastTime = performance.now(); ui.overlay.hidden = true; ui.pause.disabled = false; ui.pause.textContent = 'Pause'; }
   function pause() { if (!running) return; paused = !paused; ui.pause.textContent = paused ? 'Resume' : 'Pause'; ui.overlay.hidden = !paused; if (paused) { ui.title.textContent = 'PAUSED'; ui.copy.textContent = 'Take a breath, then get back in the game.'; ui.action.textContent = 'Resume'; } else lastTime = performance.now(); }
   function setPaddleFromPointer(event) { const rect = canvas.getBoundingClientRect(); const source = event.touches ? event.touches[0] : event; state.playerY = clamp((source.clientY - rect.top) * H / rect.height - paddle.h / 2, 0, H - paddle.h); }
 
