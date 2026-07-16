@@ -26,7 +26,7 @@ Create a folder under `games/` with an `index.html`, styles, and script. Add an 
 
 ## Shared UI and storage
 
-Use `shared/arcade.css` for shared visual tokens, header/footer, Settings Center, controls, status chips, and focus behavior. Use `shared/arcade.js` for the version label, network indicator, install prompt, Settings Center, and namespaced local preferences. Arcade-wide choices live in `webArcade.settings`; Pong choices live in `webArcade.pong`; future statistics belong in `webArcade.stats`. The shared helper migrates the legacy mute and Pong-difficulty keys without overwriting a saved Pong preference. Do not add third-party code to shared files.
+Use `shared/arcade.css` for shared visual tokens, header/footer, Settings Center, controls, status chips, and focus behavior. Use `shared/arcade.js` for the version label, network indicator, install prompt, Settings Center, and namespaced local preferences. Arcade-wide choices live in `webArcade.settings`; Pong choices live in `webArcade.pong`; future statistics belong in versioned `webArcade.stats`; achievement unlock dates belong in `webArcade.achievements`. Both are local-only browser data, must use safe defaults and migrations, and must never be transmitted. Shared statistics and achievement helpers should be reusable by future games. The shared helper migrates the legacy mute and Pong-difficulty keys without overwriting a saved Pong preference. Do not add third-party code to shared files.
 
 ## Accessibility and mobile
 
