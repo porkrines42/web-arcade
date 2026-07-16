@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.10.1 — Pong mobile layout refinement
+
+- Added a Back to Arcade button to the portrait rotation prompt.
+- Moved the in-game arcade link to the top-left of the mobile score banner and condensed difficulty choices into a selector.
+
 ## Version 1.10.0 — Pong mobile score controls
 
 - Replaced the mobile Up and Down paddle buttons with direct touch movement on the court.

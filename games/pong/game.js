@@ -7,7 +7,7 @@
   const ui = {
     player: document.getElementById('player-score'), cpu: document.getElementById('cpu-score'), overlay: document.getElementById('overlay'),
     title: document.getElementById('overlay-title'), copy: document.getElementById('overlay-copy'), action: document.getElementById('main-action'),
-    pause: document.getElementById('pause'), restart: document.getElementById('restart')
+    pause: document.getElementById('pause'), restart: document.getElementById('restart'), difficulty: document.getElementById('difficulty')
   };
   const W = canvas.width, H = canvas.height;
   const paddle = { x: 42, w: 15, h: 105 };
@@ -51,7 +51,7 @@
   function setDifficulty(level) {
     difficulty = levels[level] ? level : 'normal';
     WebArcade.setPongDifficulty(difficulty);
-    document.querySelectorAll('[data-level]').forEach(button => button.classList.toggle('active', button.dataset.level === difficulty));
+    ui.difficulty.value = difficulty;
     cpuThinkTime = 0;
   }
 
@@ -178,7 +178,7 @@
   function pause() { if (!running) return; paused = !paused; document.body.dataset.pongActive = 'true'; ui.pause.textContent = paused ? 'Resume' : 'Pause'; ui.overlay.hidden = !paused; if (paused) { ui.title.textContent = 'PAUSED'; ui.copy.textContent = 'Take a breath, then get back in the game.'; ui.action.textContent = 'Resume'; } else lastTime = performance.now(); }
   function setPaddleFromPointer(event) { const rect = canvas.getBoundingClientRect(); const source = event.touches ? event.touches[0] : event; state.playerY = clamp((source.clientY - rect.top) * H / rect.height - paddle.h / 2, 0, H - paddle.h); }
 
-  document.querySelectorAll('[data-level]').forEach(button => button.addEventListener('click', () => setDifficulty(button.dataset.level)));
+  ui.difficulty.addEventListener('change', () => setDifficulty(ui.difficulty.value));
   ui.action.addEventListener('click', start); ui.pause.addEventListener('click', pause);
   ui.restart.addEventListener('click', () => { document.body.dataset.pongActive = 'false'; resetMatch(); running = false; paused = false; ui.pause.disabled = true; ui.overlay.hidden = false; ui.title.textContent = 'SERVE IT UP'; ui.copy.textContent = 'First to seven wins. Keep the rally alive.'; ui.action.textContent = 'Start game'; });
   window.addEventListener('keydown', event => { const key = event.key.toLowerCase(); if (['w', 's', 'arrowup', 'arrowdown'].includes(key)) { keys.add(key); event.preventDefault(); } });
