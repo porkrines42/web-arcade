@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.6.0 — Phase 1 polish complete
+
+- Added safe-area-aware mobile layouts, larger controls, scrollable dialogs, responsive Pong layouts, and orientation-safe pausing.
+- Completed PWA update handling with an opt-in update notice, cache cleanup, offline navigation fallback, installation metadata, and offline status announcements.
+- Refined keyboard and screen-reader behavior, including focus containment and restoration in progress dialogs, live connection/update messages, and reduced-motion-safe UI.
+
 ## Version 1.5.0 — Local statistics and achievements
 
 - Added local-only Pong match, point, streak, difficulty, date, and active-play-time statistics with safe versioned storage.

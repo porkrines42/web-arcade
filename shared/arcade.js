@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const VERSION = '1.5.0';
+  const VERSION = '1.6.0';
   const SETTINGS_KEY = 'webArcade.settings';
   const PONG_KEY = 'webArcade.pong';
   const STATS_KEY = 'webArcade.stats';
@@ -34,7 +34,8 @@
   Arcade.getPongDifficulty = () => pong().difficulty || settings().difficulty;
   Arcade.setPongDifficulty = difficulty => { write(PONG_KEY, Object.assign({}, pong(), { difficulty })); };
   Arcade.motionOff = motionOff;
-  function updateConnection() { document.querySelectorAll('[data-network-status]').forEach(indicator => { const offline = !navigator.onLine; indicator.classList.toggle('is-offline', offline); const label = indicator.querySelector('span'); if (label) label.textContent = offline ? 'Offline ready' : 'Online · offline ready'; }); }
+  function announce(message) { document.querySelectorAll('[data-announcements]').forEach(node => { node.textContent = ''; setTimeout(() => { node.textContent = message; }, 20); }); }
+  function updateConnection() { const offline = !navigator.onLine; document.querySelectorAll('[data-network-status]').forEach(indicator => { indicator.classList.toggle('is-offline', offline); const label = indicator.querySelector('span'); if (label) label.textContent = offline ? 'Offline — saved games ready' : 'Online · offline ready'; }); announce(offline ? 'You are offline. Saved arcade pages remain available.' : 'You are online.'); }
   let installPrompt;
   function install() { if (!installPrompt) return; installPrompt.prompt(); installPrompt.userChoice.then(() => { installPrompt = null; updateInstall(); }); }
   function updateInstall() { document.querySelectorAll('[data-install-app]').forEach(button => { button.hidden = !installPrompt; }); }
@@ -68,4 +69,26 @@
   document.querySelectorAll('[data-install-app]').forEach(button => button.addEventListener('click', install));
   window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; updateInstall(); }); window.addEventListener('appinstalled', () => { installPrompt = null; updateInstall(); });
   window.addEventListener('online', updateConnection); window.addEventListener('offline', updateConnection); updateConnection();
+  function showUpdate(worker) {
+    if (document.querySelector('.update-notice')) return;
+    const notice = document.createElement('aside'); notice.className = 'update-notice'; notice.setAttribute('role', 'status');
+    notice.innerHTML = '<span>An update is available.</span><div><button type="button" data-update>Update</button><button type="button" data-dismiss>Dismiss</button></div>';
+    document.body.append(notice); announce('An update is available.');
+    notice.querySelector('[data-dismiss]').addEventListener('click', () => notice.remove());
+    notice.querySelector('[data-update]').addEventListener('click', () => {
+      if (document.body.dataset.pongActive === 'true') { announce('Finish or restart the active Pong match before updating.'); return; }
+      notice.querySelector('[data-update]').disabled = true; worker.postMessage('skipWaiting');
+    });
+  }
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    const manifest = document.querySelector('link[rel="manifest"]'); if (!manifest) return;
+    const workerUrl = new URL('service-worker.js', manifest.href);
+    navigator.serviceWorker.register(workerUrl, { scope: new URL('./', manifest.href).pathname }).then(registration => {
+      if (registration.waiting) showUpdate(registration.waiting);
+      registration.addEventListener('updatefound', () => { const worker = registration.installing; if (worker) worker.addEventListener('statechange', () => { if (worker.state === 'installed' && navigator.serviceWorker.controller) showUpdate(worker); }); });
+      let refreshing = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!refreshing) { refreshing = true; window.location.reload(); } });
+    }).catch(() => {});
+  }
+  window.addEventListener('load', registerServiceWorker);
 }());

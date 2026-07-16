@@ -28,9 +28,13 @@ Use **Settings** on the home page or in Pong to save global sound and volume, an
 
 Pong records matches, points, win streaks, difficulty results, approximate active play time, and achievements in `localStorage`. This information stays only in the current browser on the current device; it is never sent anywhere. Open **View progress** from the home page to review it. The Settings Center has confirmed controls to reset Pong statistics and achievements or clear all Web Arcade data.
 
-## Install the PWA
+## Install, offline use, and updates
 
-Visit the deployed site once while online, then use your browser's **Install app** or **Add to Home Screen** control. The service worker caches the home page, Pong, icons, and supporting files so both screens work offline afterward.
+Visit the deployed site once while online, then use the visible **Install app** button when your browser offers it. On iPhone or iPad, use Safari’s Share button and choose **Add to Home Screen**. The installed app opens in standalone mode and respects the device safe area.
+
+The first successful visit caches the arcade home page, Pong, Settings Center, statistics, achievements, icon, and their local supporting files. These saved pages continue to work offline; uncached destinations fall back to the home page instead of showing a browser error. Coming Soon cards remain informational and are not presented as offline games.
+
+When a new release has downloaded, a small **An update is available** message appears. Choose **Update** to activate it and reload safely. A live Pong match is never reloaded automatically; finish or restart it first, then update.
 
 ## Publish with GitHub Pages
 
