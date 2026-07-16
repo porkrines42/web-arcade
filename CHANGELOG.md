@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.8.0 — Mobile arcade access
+
+- Restored the complete Pong page on phones: difficulty selection, touch controls, and the Back to Arcade link remain available in portrait and landscape.
+- Kept the arcade navigation visible while scrolling and removed the forced fullscreen/orientation experience that prevented access to the game menu.
+- Expanded the Pong installed-app scope to include the arcade home page, so a Pong home-screen shortcut can return to the game library.
+
 ## Version 1.7.0 — Mobile Pong cabinet
 
 - Made Pong install as its own landscape-oriented standalone app, while keeping it under the root offline service worker.
