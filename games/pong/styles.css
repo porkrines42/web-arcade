@@ -2,3 +2,25 @@
 
 @keyframes score-pulse{50%{box-shadow:0 0 55px #bcff3fcc,0 0 20px #22e6ff99}}
 main{padding-left:max(2rem,env(safe-area-inset-left));padding-right:max(2rem,env(safe-area-inset-right));padding-bottom:max(4rem,env(safe-area-inset-bottom))}.game-actions button,.difficulty button,.sound-toggle,.action{min-height:44px}.game-shell{contain:layout paint}.touch-controls button{min-height:60px;touch-action:none}@media(max-width:650px){main{padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right));padding-bottom:max(2rem,env(safe-area-inset-bottom))}.game-header{gap:.75rem;align-items:center}.game-header h1{font-size:clamp(2.6rem,15vw,4rem)}.difficulty{width:100%}.difficulty button{flex:1;padding:.6rem .25rem}.game-actions{display:grid;grid-template-columns:1fr 1fr}.game-actions .secondary{width:100%}.overlay>div{padding:1rem}.overlay p:not(.eyebrow){line-height:1.5}.scoreboard strong{font-size:1.8rem}}@media(orientation:landscape) and (max-height:560px){main{padding-top:1rem;padding-bottom:1rem}.game-header h1{font-size:2.5rem}.controls-panel{margin:1rem 0 .5rem}.difficulty-copy,.how-to{display:none}.touch-controls{grid-template-columns:1fr 1fr;margin-top:.6rem}.site-header{padding-top:max(.6rem,env(safe-area-inset-top));padding-bottom:.6rem}}
+
+.orientation-prompt{display:none}
+@media (pointer:coarse){.touch-controls{display:grid}}
+@media (pointer:coarse) and (orientation:portrait){
+  .orientation-prompt{position:fixed;z-index:200;inset:0;display:grid;place-content:center;padding:max(2rem,env(safe-area-inset-top)) max(2rem,env(safe-area-inset-right)) max(2rem,env(safe-area-inset-bottom)) max(2rem,env(safe-area-inset-left));text-align:center;background:radial-gradient(circle at center,#321259,#090718 62%);color:var(--text)}
+  .orientation-prompt h2{margin:.35rem 0;font-size:clamp(2rem,12vw,3rem);letter-spacing:-.06em;color:var(--lime)}
+  .orientation-prompt>p:last-child{max-width:19rem;margin:.35rem auto;color:var(--muted);line-height:1.55}
+  .phone-rotation{font-size:4.5rem;line-height:1;color:var(--cyan);text-shadow:0 0 24px #22e6ff88;animation:phone-rotate 1.7s ease-in-out infinite}
+}
+@media (pointer:coarse) and (orientation:landscape) and (max-height:600px){
+  html,body{width:100%;height:100%;overflow:hidden;background:#090718}
+  .skip-link,.page-glow,.site-header,.game-header,.controls-panel,.game-actions,.how-to,.site-footer{display:none}
+  main{display:block;max-width:none;height:100dvh;margin:0;padding:0!important}
+  .game-shell{height:100dvh;border:0;box-shadow:none}
+  .scoreboard{height:54px;gap:clamp(2rem,10vw,7rem);padding-top:env(safe-area-inset-top)}
+  .scoreboard strong{font-size:1.55rem}.scoreboard p{margin:0}
+  canvas{height:calc(100% - 54px);width:100%}
+  .overlay{inset:54px 0 0}.overlay>div{padding:1rem}
+  .touch-controls{position:fixed;z-index:10;left:max(.75rem,env(safe-area-inset-left));bottom:max(.75rem,env(safe-area-inset-bottom));display:grid;width:min(10rem,36vw);grid-template-columns:1fr 1fr;gap:.5rem;margin:0}
+  .touch-controls button{height:4.5rem;min-height:4.5rem;border-color:#8b7fbc;background:#120c2ed9;box-shadow:0 0 18px #090718;font-size:1.4rem}
+}
+@keyframes phone-rotate{0%,20%{transform:rotate(0deg)}50%,70%{transform:rotate(90deg)}100%{transform:rotate(90deg)}}
