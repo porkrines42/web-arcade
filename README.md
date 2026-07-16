@@ -30,7 +30,7 @@ Pong records matches, points, win streaks, difficulty results, approximate activ
 
 ## Install, offline use, and updates
 
-Visit the deployed site once while online, then use the visible **Install app** button when your browser offers it. On iPhone or iPad, use Safari’s Share button and choose **Add to Home Screen**. The installed arcade opens in standalone mode and respects the device safe area. To save Pong as its own cabinet, open Pong first, then use Safari’s Share button and choose **Add to Home Screen**; the Pong icon launches directly into its landscape game view.
+Visit the deployed site once while online, then use the visible **Install app** button when your browser offers it. On iPhone or iPad, use Safari’s Share button and choose **Add to Home Screen**. The installed arcade opens in standalone mode and respects the device safe area. You can also save Pong directly to the home screen; its shortcut opens Pong, while the persistent **Back to Arcade** link returns to the complete game library.
 
 The first successful visit caches the arcade home page, Pong, Settings Center, statistics, achievements, icon, and their local supporting files. These saved pages continue to work offline; uncached destinations fall back to the home page instead of showing a browser error. Coming Soon cards remain informational and are not presented as offline games.
 
