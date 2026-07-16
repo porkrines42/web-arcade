@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   const STORAGE_KEY = 'web-arcade-muted';
-  const version = '1.1.0';
+  const version = '1.1.1';
   const Arcade = window.WebArcade = window.WebArcade || {};
   Arcade.version = version;
   Arcade.isMuted = function () { return localStorage.getItem(STORAGE_KEY) === 'true'; };
