@@ -18,7 +18,7 @@
     normal: { speed: 405, reaction: .14, error: 24, awayError: 12 },
     hard: { speed: 515, reaction: .055, error: 9, awayError: 4 }
   };
-  let difficulty = localStorage.getItem('web-arcade-pong-difficulty') || 'normal';
+  let difficulty = window.WebArcade.getPongDifficulty();
   let running = false, paused = false, gameOver = false, animation, audio, lastTime = 0;
   let cpuTarget = H / 2, cpuThinkTime = 0, impactFlash = { player: 0, cpu: 0 }, scoreFlash = 0;
   const state = {
@@ -33,7 +33,7 @@
     const oscillator = audio.createOscillator(), gain = audio.createGain();
     oscillator.type = type === 'score' ? 'square' : 'sine';
     oscillator.frequency.value = type === 'score' ? 180 : type === 'hit' ? 480 : 330;
-    gain.gain.setValueAtTime(.06, audio.currentTime);
+    gain.gain.setValueAtTime(.06 * WebArcade.getVolume(), audio.currentTime);
     gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .11);
     oscillator.connect(gain).connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .12);
   }
@@ -43,7 +43,7 @@
 
   function setDifficulty(level) {
     difficulty = levels[level] ? level : 'normal';
-    localStorage.setItem('web-arcade-pong-difficulty', difficulty);
+    WebArcade.setPongDifficulty(difficulty);
     document.querySelectorAll('[data-level]').forEach(button => button.classList.toggle('active', button.dataset.level === difficulty));
     cpuThinkTime = 0;
   }
