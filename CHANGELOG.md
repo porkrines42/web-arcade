@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.2.0 — Premium home page redesign
+
+- Rebuilt the home page with a responsive premium arcade layout, CSS-authored cabinet artwork, featured Pong presentation, reusable game cards, and accessible mobile navigation.
+- Added factual arcade statistics, a privacy-first product promise, an achievements placeholder, settings disclosure, and clear offline/install status treatment.
+- Updated shared version labels and offline cache coverage for the redesigned experience.
+
 ## Version 1.1.1 — Pong gameplay tuning
 
 - Rebuilt Pong CPU behavior with distinct reaction, speed, tracking, and predictive-intercept tuning for Easy, Normal, and Hard difficulties.
