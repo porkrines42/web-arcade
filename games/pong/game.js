@@ -187,6 +187,5 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) pause(); });
   window.addEventListener('orientationchange', () => { if (running && !paused) pause(); });
   canvas.addEventListener('mousemove', setPaddleFromPointer); canvas.addEventListener('touchstart', event => { setPaddleFromPointer(event); event.preventDefault(); }, { passive: false }); canvas.addEventListener('touchmove', event => { setPaddleFromPointer(event); event.preventDefault(); }, { passive: false });
-  [['up', -1], ['down', 1]].forEach(([id, direction]) => { const button = document.getElementById(id); const key = direction === -1 ? 'arrowup' : 'arrowdown'; const startMove = event => { event.preventDefault(); keys.add(key); }; const stopMove = event => { keys.delete(key); if (event && button.hasPointerCapture(event.pointerId)) button.releasePointerCapture(event.pointerId); }; button.addEventListener('pointerdown', event => { button.setPointerCapture(event.pointerId); startMove(event); }); ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => button.addEventListener(type, stopMove)); });
   setDifficulty(difficulty); resetBall(); draw(); animation = requestAnimationFrame(loop);
   })();
