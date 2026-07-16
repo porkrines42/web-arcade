@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.9.0 — Full-screen mobile Pong
+
+- Restored the landscape rotation prompt and full-screen Pong cabinet for touch devices, including home-screen installs where the platform supports the mode.
+- Kept the on-screen Up and Down paddle buttons visible over the full-screen court so touch controls remain usable after rotating.
+
 ## Version 1.8.0 — Mobile arcade access
 
 - Restored the complete Pong page on phones: difficulty selection, touch controls, and the Back to Arcade link remain available in portrait and landscape.
