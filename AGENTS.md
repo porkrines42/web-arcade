@@ -1,5 +1,7 @@
 # Web Arcade Agent Guide
 
+- Read `PROJECT.md` before making changes so additions follow the product and platform conventions.
+
 - Preserve the multi-game structure: put every game in its own folder under `./games/`.
 - Add a home-page card whenever a new game is added, and test navigation to the game and back.
 - Preserve mobile, mouse, touch, and keyboard controls where applicable.
