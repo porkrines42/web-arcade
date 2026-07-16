@@ -10,6 +10,7 @@ A lightweight, neon-styled collection of browser games built with plain HTML, CS
 ├── styles.css / app.js         # Home-page presentation and behavior
 ├── manifest.webmanifest        # PWA metadata
 ├── service-worker.js           # Root offline cache for all games
+├── shared/                    # Shared Settings Center, UI, and browser helpers
 ├── icons/icon.svg              # Self-contained installable-app icon
 └── games/
     └── pong/                   # Pong HTML, styles, and game logic
@@ -18,6 +19,10 @@ A lightweight, neon-styled collection of browser games built with plain HTML, CS
 ## Play Pong
 
 Open the home page and select **Play** on the Pong card. Keep the ball in play with **W/S** or **Up/Down Arrow** keys. You can also move the paddle with the mouse, drag on a touch screen, or use the visible mobile Up and Down buttons. Select Easy, Normal, or Hard; the first player to 7 wins.
+
+## Settings Center
+
+Use **Settings** on the home page or in Pong to save global sound and volume, animation, theme, and default Pong difficulty preferences. Settings stay on the device. Pong keeps its own selected difficulty once you choose one, and the center provides confirmed controls to reset settings, Pong preferences, or all Web Arcade data.
 
 ## Install the PWA
 

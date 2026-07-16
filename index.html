@@ -3,15 +3,14 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#090718">
   <meta name="description" content="Web Arcade is a free, private collection of browser games that works offline.">
-  <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg"><link rel="stylesheet" href="shared/arcade.css"><link rel="stylesheet" href="styles.css"><title>Web Arcade · Play anywhere</title>
+  <script>try{var s=JSON.parse(localStorage.getItem('webArcade.settings')||'{}');document.documentElement.dataset.theme=s.theme||'arcade-dark'}catch(e){}</script><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon.svg"><link rel="stylesheet" href="shared/arcade.css"><link rel="stylesheet" href="styles.css"><title>Web Arcade · Play anywhere</title>
 </head>
 <body id="top">
   <a class="skip-link" href="#games">Skip to game library</a><div class="page-glow" aria-hidden="true"></div>
   <header class="site-header">
     <a class="brand" href="./" aria-label="Web Arcade home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>WEB <strong>ARCADE</strong></span></a>
     <nav class="site-nav" aria-label="Primary navigation"><a href="#top">Home</a><a href="#games">Games</a><a href="#achievements">Achievements</a></nav>
-    <div class="header-tools"><span class="network-status" data-network-status role="status"><i></i><span>Checking connection…</span></span><button class="settings-button" type="button" data-settings aria-expanded="false" aria-controls="settings-panel">Settings</button><button class="install-button" data-install-app type="button" hidden>Install app</button></div>
-    <div class="settings-panel" id="settings-panel" data-settings-panel hidden><strong>Arcade settings</strong><p>Your preferences stay on this device. Sound controls are available inside each game.</p></div>
+    <div class="header-tools"><span class="network-status" data-network-status role="status"><i></i><span>Checking connection…</span></span><button class="settings-button" type="button" data-settings aria-haspopup="dialog">Settings</button><button class="install-button" data-install-app type="button" hidden>Install app</button></div>
   </header>
   <main>
     <section class="hero section-shell" aria-labelledby="hero-title">

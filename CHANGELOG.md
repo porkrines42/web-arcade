@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.3.0 — Settings Center
+
+- Added a reusable, keyboard-accessible Settings Center on the arcade and Pong, with persistent global audio, visual motion, theme, and gameplay-default choices.
+- Added safe migration for existing mute and Pong difficulty preferences, confirmed local-data reset controls, and app installation, connection, standalone, and iPhone guidance.
+- Updated Pong to honor global volume, mute, motion, theme variation, and saved/default difficulty while retaining its improved CPU and controls.
+
+
 ## Version 1.2.0 — Premium home page redesign
 
 - Rebuilt the home page with a responsive premium arcade layout, CSS-authored cabinet artwork, featured Pong presentation, reusable game cards, and accessible mobile navigation.
