@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09061d">
+  <meta name="description" content="Web Arcade: small, bright browser games that work offline.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <title>Web Arcade</title>
+</head>
+<body>
+  <a class="skip-link" href="#games">Skip to games</a>
+  <div class="page-glow" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Web Arcade home"><span class="brand-mark">▰</span> WEB <strong>ARCADE</strong></a>
+    <nav aria-label="Primary navigation"><a href="#games">Games</a><a href="#about">About</a></nav>
+    <span class="offline-status" id="offline-status" role="status"><i></i><span>Checking connection…</span></span>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow">INSERT COIN · PLAY ANYWHERE</p>
+      <h1 id="hero-title">Welcome to<br><span>Web Arcade</span></h1>
+      <p class="hero-copy">Quick, colorful games built for the browser. No sign-in. No downloads required.</p>
+      <a class="primary-button" href="#games">Choose a game <span aria-hidden="true">↓</span></a>
+    </section>
+    <section class="games-section" id="games" aria-labelledby="games-title">
+      <div class="section-heading"><div><p class="eyebrow">GAME LIBRARY</p><h2 id="games-title">Pick your challenge</h2></div><p class="count">01 <span>/ 03</span></p></div>
+      <div class="game-grid">
+        <article class="game-card playable">
+          <div class="card-art pong-art" aria-hidden="true"><span class="paddle left"></span><span class="ball"></span><span class="paddle right"></span><span class="score">01&nbsp;&nbsp; 00</span></div>
+          <div class="card-content"><div><p class="tag">CLASSIC · 1 PLAYER</p><h3>Pong</h3><p>Outplay the CPU in the neon original.</p></div><a class="play-link" href="games/pong/" aria-label="Play Pong">PLAY <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="game-card coming purple">
+          <div class="card-art maze-art" aria-hidden="true"><span>?</span></div>
+          <div class="card-content"><div><p class="tag">COMING SOON</p><h3>Pixel Maze</h3><p>Find your way through shifting corridors.</p></div><span class="locked">LOCKED</span></div>
+        </article>
+        <article class="game-card coming blue">
+          <div class="card-art orbit-art" aria-hidden="true"><span>✦</span></div>
+          <div class="card-content"><div><p class="tag">COMING SOON</p><h3>Star Drift</h3><p>Dodge the debris. Chase the high score.</p></div><span class="locked">LOCKED</span></div>
+        </article>
+      </div>
+    </section>
+    <section class="about" id="about" aria-labelledby="about-title"><p class="eyebrow">ARCADE MODE</p><h2 id="about-title">Play now. Play offline later.</h2><p>Install Web Arcade for a pocket-sized cabinet that is ready whenever you are.</p></section>
+  </main>
+  <footer><span>WEB ARCADE</span><span>v1.0.0</span><span>MADE FOR PLAY</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
