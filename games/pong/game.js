@@ -41,6 +41,12 @@
 
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
   function randomRange(amount) { return (Math.random() * 2 - 1) * amount; }
+  function isPortraitPhone() { return window.matchMedia('(pointer: coarse) and (orientation: portrait)').matches; }
+  function enterGameView() {
+    if (!window.matchMedia('(pointer: coarse)').matches || document.fullscreenElement || navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) return;
+    const fullscreen = document.documentElement.requestFullscreen;
+    if (fullscreen) fullscreen.call(document.documentElement, { navigationUI: 'hide' }).catch(() => {});
+  }
 
   function setDifficulty(level) {
     difficulty = levels[level] ? level : 'normal';
@@ -168,7 +174,7 @@
     const dt = Math.min((time - lastTime) / 1000 || 0, .035); lastTime = time;
     update(dt); draw(); animation = requestAnimationFrame(loop);
   }
-  function start() { document.body.dataset.pongActive = 'true'; if (gameOver) resetMatch(); if (!match) { match = { difficulty, maxDeficit: 0, playTimeSeconds: 0, completed: false }; WebArcadeStats.pongStart(); WebArcadeAchievements.evaluate('start'); } running = true; paused = false; lastTime = performance.now(); ui.overlay.hidden = true; ui.pause.disabled = false; ui.pause.textContent = 'Pause'; }
+  function start() { if (isPortraitPhone()) return; enterGameView(); document.body.dataset.pongActive = 'true'; if (gameOver) resetMatch(); if (!match) { match = { difficulty, maxDeficit: 0, playTimeSeconds: 0, completed: false }; WebArcadeStats.pongStart(); WebArcadeAchievements.evaluate('start'); } running = true; paused = false; lastTime = performance.now(); ui.overlay.hidden = true; ui.pause.disabled = false; ui.pause.textContent = 'Pause'; }
   function pause() { if (!running) return; paused = !paused; document.body.dataset.pongActive = 'true'; ui.pause.textContent = paused ? 'Resume' : 'Pause'; ui.overlay.hidden = !paused; if (paused) { ui.title.textContent = 'PAUSED'; ui.copy.textContent = 'Take a breath, then get back in the game.'; ui.action.textContent = 'Resume'; } else lastTime = performance.now(); }
   function setPaddleFromPointer(event) { const rect = canvas.getBoundingClientRect(); const source = event.touches ? event.touches[0] : event; state.playerY = clamp((source.clientY - rect.top) * H / rect.height - paddle.h / 2, 0, H - paddle.h); }
 
