@@ -1,0 +1,29 @@
+name: Queue safe squash auto-merge
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, ready_for_review, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  queue-auto-merge:
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Queue squash auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+          if gh pr view "$PR_URL" --json autoMergeRequest --jq '.autoMergeRequest != null' | grep -qx true; then
+            echo 'Auto-merge is already enabled.'
+            exit 0
+          fi
+          gh pr merge "$PR_URL" --auto --squash

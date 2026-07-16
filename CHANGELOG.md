@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased — Repository automation
+
+- Added dependency-free pull-request validation for required files, syntax, manifests, local references, GitHub Pages-safe paths, service-worker scope, binary additions, and dependency artifacts.
+- Added safe same-repository squash auto-merge queueing that honors required checks and branch protections.
+
 ## Version 1.9.0 — Full-screen mobile Pong
 
 - Restored the landscape rotation prompt and full-screen Pong cabinet for touch devices, including home-screen installs where the platform supports the mode.

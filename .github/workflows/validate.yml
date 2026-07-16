@@ -1,0 +1,149 @@
+name: Validate Web Arcade
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Web Arcade
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pull-request code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate repository structure, paths, and local references
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.sha }}
+        run: |
+          set -euo pipefail
+
+          fail() {
+            printf 'ERROR: %s\n' "$*" >&2
+            exit 1
+          }
+
+          required_files=(
+            AGENTS.md CHANGELOG.md PROJECT.md README.md
+            index.html styles.css app.js manifest.webmanifest service-worker.js
+            shared/achievements.js shared/arcade.css shared/arcade.js shared/stats.js
+            games/pong/index.html games/pong/styles.css games/pong/game.js
+            games/pong/manifest.webmanifest
+          )
+          for path in "${required_files[@]}"; do
+            [[ -f "$path" ]] || fail "Required file is missing: $path"
+          done
+
+          if find . -path './.git' -prune -o -type d -name node_modules -print | grep -q .; then
+            fail 'node_modules must not be committed; this repository has no package-install step.'
+          fi
+          if git ls-files | grep -Eq '(^|/)(package(-lock)?\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml)$'; then
+            fail 'Package manifests or dependency lockfiles are not allowed in this dependency-free repository.'
+          fi
+
+          mapfile -t javascript_files < <(git ls-files '*.js')
+          ((${#javascript_files[@]})) || fail 'No JavaScript files were found to validate.'
+          for path in "${javascript_files[@]}"; do
+            node --check "$path" || fail "JavaScript syntax check failed: $path"
+          done
+
+          node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest', 'utf8'))" \
+            || fail 'manifest.webmanifest is not valid JSON.'
+          node -e "JSON.parse(require('fs').readFileSync('games/pong/manifest.webmanifest', 'utf8'))" \
+            || fail 'games/pong/manifest.webmanifest is not valid JSON.'
+
+          if find games -mindepth 2 -type f \( -name 'service-worker.js' -o -name 'sw.js' \) -print | grep -q .; then
+            fail 'Game folders must not contain a service worker; service-worker.js must remain root-scoped.'
+          fi
+
+          python3 - <<'PY'
+          import json
+          import re
+          import sys
+          from pathlib import Path
+
+          root = Path.cwd()
+          files = [path for path in root.rglob('*') if path.is_file() and '.git' not in path.parts]
+          errors = []
+
+          def local_reference(value, source, allow_root_fallback=False):
+              value = value.strip()
+              if not value or value.startswith(('#', '//')) or re.match(r'^[a-z][a-z0-9+.-]*:', value, re.I):
+                  return
+              value = value.split('#', 1)[0].split('?', 1)[0]
+              if not value:
+                  return
+              if value.startswith('/'):
+                  errors.append(f'{source}: root-absolute local path is not GitHub Pages project-subfolder compatible: {value}')
+                  return
+              target = (source.parent / value).resolve()
+              try:
+                  target.relative_to(root.resolve())
+              except ValueError:
+                  errors.append(f'{source}: local reference escapes the repository: {value}')
+                  return
+              if allow_root_fallback and not target.exists():
+                  target = (root / value).resolve()
+              if not target.exists():
+                  errors.append(f'{source}: referenced local path is missing: {value}')
+
+          html_pattern = re.compile(r'''(?:src|href)\s*=\s*["']([^"']+)["']''', re.I)
+          css_pattern = re.compile(r'''url\(\s*["']?([^"')]+)["']?\s*\)''', re.I)
+          js_pattern = re.compile(r'''["']([^"'\n]+\.(?:html|css|js|webmanifest|svg|png|jpg|jpeg|gif|ico|webp))(?:[?#][^"']*)?["']''', re.I)
+          js_absolute_pattern = re.compile(r'''["'](/[^"'\n]*)["']''')
+
+          for source in files:
+              if source.suffix == '.html':
+                  for value in html_pattern.findall(source.read_text(encoding='utf-8')):
+                      local_reference(value, source)
+              elif source.suffix == '.css':
+                  for value in css_pattern.findall(source.read_text(encoding='utf-8')):
+                      local_reference(value, source)
+              elif source.suffix == '.js':
+                  for value in js_pattern.findall(source.read_text(encoding='utf-8')):
+                      # Browser JavaScript commonly resolves asset strings from the
+                      # document or manifest rather than from the script's folder.
+                      local_reference(value, source, allow_root_fallback=True)
+                  for value in js_absolute_pattern.findall(source.read_text(encoding='utf-8')):
+                      local_reference(value, source)
+
+          service_worker = root / 'service-worker.js'
+          worker_source = service_worker.read_text(encoding='utf-8')
+          app_files = re.search(r'APP_FILES\s*=\s*\[([^\]]*)\]', worker_source, re.S)
+          if not app_files:
+              errors.append(f'{service_worker}: APP_FILES cache list is missing')
+          else:
+              for value in re.findall(r'''["']([^"']+)["']''', app_files.group(1)):
+                  local_reference(value, service_worker)
+
+          for source in (root / 'manifest.webmanifest', root / 'games/pong/manifest.webmanifest'):
+              manifest = json.loads(source.read_text(encoding='utf-8'))
+              for key in ('start_url', 'scope'):
+                  if isinstance(manifest.get(key), str):
+                      local_reference(manifest[key], source)
+              for icon in manifest.get('icons', []):
+                  if isinstance(icon, dict) and isinstance(icon.get('src'), str):
+                      local_reference(icon['src'], source)
+
+          if errors:
+              print('ERROR: Invalid local paths or references found:', file=sys.stderr)
+              print(*[f'  - {error}' for error in errors], sep='\n', file=sys.stderr)
+              sys.exit(1)
+          PY
+
+          git cat-file -e "$BASE_SHA^{commit}" || BASE_SHA="$(git rev-parse origin/main)"
+          while IFS= read -r path; do
+            [[ -z "$path" ]] && continue
+            if git diff --numstat "$BASE_SHA" HEAD -- "$path" | awk '$1 == "-" || $2 == "-" { found = 1 } END { exit !found }'; then
+              fail "New binary file is not allowed: $path. Only binaries tracked before this pull request are permitted."
+            fi
+          done < <(git diff --name-only --diff-filter=A "$BASE_SHA" HEAD)
+
+          printf 'Validation completed successfully.\n'

@@ -12,6 +12,10 @@ The home page should feel like a polished, premium browser-gaming platform witho
 
 The project intentionally uses plain HTML, CSS, and vanilla JavaScript. There is no build step, package manager, framework, CDN, analytics service, API, or database. Files can be deployed directly from the repository root to GitHub Pages.
 
+## Pull-request automation
+
+Pull requests targeting `main` are automatically queued for squash auto-merge when they are ready for review and come from this repository. The **Validate Web Arcade** check must pass; merge conflicts and failed checks require manual intervention. Future contributors and agents must not bypass validation or branch protections. GitHub automatically deletes merged head branches, and each merge to `main` triggers the existing GitHub Pages deployment.
+
 ## Folders
 
 - `index.html`, `styles.css`, and `app.js` are the arcade home page.
