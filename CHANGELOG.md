@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.10.0 — Pong mobile score controls
+
+- Replaced the mobile Up and Down paddle buttons with direct touch movement on the court.
+- Moved Pause, difficulty selection, and the Arcade menu link into Pong's score banner so they remain available during mobile landscape play.
+
 ## Unreleased — Repository automation
 
 - Added dependency-free pull-request validation for required files, syntax, manifests, local references, GitHub Pages-safe paths, service-worker scope, binary additions, and dependency artifacts.
