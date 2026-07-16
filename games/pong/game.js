@@ -144,11 +144,13 @@
   }
 
   function draw() {
-    ctx.clearRect(0, 0, W, H); ctx.fillStyle = scoreFlash ? '#17103d' : '#0b0923'; ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = '#5e538833'; ctx.setLineDash([12, 15]); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]);
-    ctx.shadowBlur = impactFlash.player ? 32 : 18; ctx.shadowColor = '#22e6ff'; ctx.fillStyle = '#dffcff'; ctx.fillRect(paddle.x, state.playerY, paddle.w, paddle.h);
-    ctx.shadowBlur = impactFlash.cpu ? 32 : 18; ctx.shadowColor = '#ff3ed1'; ctx.fillStyle = '#ffd9f5'; ctx.fillRect(W - paddle.x - paddle.w, state.cpuY, paddle.w, paddle.h);
-    ctx.shadowColor = '#bcff3f'; ctx.fillStyle = '#bcff3f'; ctx.beginPath(); ctx.arc(state.ball.x, state.ball.y, state.ball.r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    const tokens = getComputedStyle(document.documentElement), color = name => tokens.getPropertyValue(name).trim();
+    const bg = color('--arcade-court'), flash = color('--arcade-court-flash'), line = color('--arcade-line'), cyan = color('--arcade-cyan'), pink = color('--arcade-pink'), lime = color('--arcade-lime'), paddleColor = color('--arcade-paddle');
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = scoreFlash ? flash : bg; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = line; ctx.globalAlpha = .45; ctx.setLineDash([12, 15]); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+    ctx.shadowBlur = impactFlash.player ? 32 : 18; ctx.shadowColor = cyan; ctx.fillStyle = paddleColor; ctx.fillRect(paddle.x, state.playerY, paddle.w, paddle.h);
+    ctx.shadowBlur = impactFlash.cpu ? 32 : 18; ctx.shadowColor = pink; ctx.fillStyle = paddleColor; ctx.fillRect(W - paddle.x - paddle.w, state.cpuY, paddle.w, paddle.h);
+    ctx.shadowColor = lime; ctx.fillStyle = lime; ctx.beginPath(); ctx.arc(state.ball.x, state.ball.y, state.ball.r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
   }
 
   function loop(time) {

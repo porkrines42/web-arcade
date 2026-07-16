@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.4.0 — Settings Center completion
+
+- Completed the shared Settings Center with validated persistent preferences, app status and install guidance, keyboard focus return, and confirmed data controls.
+- Made Pong's canvas use shared theme tokens and extended the Pong reset control to remove saved Pong statistics when present.
+
 ## Version 1.3.0 — Settings Center
 
 - Added a reusable, keyboard-accessible Settings Center on the arcade and Pong, with persistent global audio, visual motion, theme, and gameplay-default choices.

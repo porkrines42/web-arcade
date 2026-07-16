@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-arcade-v6';
+const CACHE_NAME = 'web-arcade-v7';
 const APP_FILES = ['./', 'index.html', 'styles.css', 'app.js', 'shared/arcade.css', 'shared/arcade.js', 'manifest.webmanifest', 'icons/icon.svg', 'games/pong/', 'games/pong/index.html', 'games/pong/styles.css', 'games/pong/game.js'];
 self.addEventListener('install', event => { event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', event => { event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim())); });
