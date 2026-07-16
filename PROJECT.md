@@ -36,6 +36,12 @@ Pages need a skip link, semantic headings, visible `:focus-visible` states, read
 
 Use relative paths only: never root-absolute URLs, a GitHub user name, or a production host. Keep the manifest and root-scoped service worker working from a GitHub Pages project subpath. Every changed or newly required local asset must be listed in `APP_FILES` in `service-worker.js`; increment the cache version and retain obsolete-cache cleanup. Never put a service worker in a game directory.
 
+## Phase 1 mobile and PWA conventions
+
+Use `viewport-fit=cover` and CSS safe-area insets on every page. Touch targets should be at least about 44 CSS pixels, panels must fit and scroll within small viewports, and Pong touch input may prevent scrolling only while operating the court or touch controls. Keep user zoom enabled. Pong pauses on hidden tabs and orientation changes.
+
+The root service worker precaches every local app file. It must retain a waiting worker until the user chooses the shared update notice; never call `skipWaiting()` during install. Navigation uses the network when available and the matching cached page (or cached arcade home) when offline. Each release increments the shared version and cache name together.
+
 ## Versioning and roadmap
 
 Display the current version in the shared footer and record releases in `CHANGELOG.md`. Increment the offline cache version whenever files change. A likely roadmap is additional games, optional local high scores, richer game-card artwork, motion-reduction refinements, and more offline-install polish—while keeping the no-build, dependency-free approach.

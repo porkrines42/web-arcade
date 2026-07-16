@@ -73,7 +73,7 @@
     ui.player.textContent = state.playerScore; ui.cpu.textContent = state.cpuScore;
     scoreFlash = .28; shell.classList.remove('score-flash'); void shell.offsetWidth; shell.classList.add('score-flash'); sound('score');
     if (state.playerScore === 7 || state.cpuScore === 7) {
-      running = false; gameOver = true; ui.pause.disabled = true; ui.overlay.hidden = false;
+      running = false; document.body.dataset.pongActive = 'false'; gameOver = true; ui.pause.disabled = true; ui.overlay.hidden = false;
       const win = state.playerScore === 7;
       ui.title.textContent = win ? 'YOU WIN!' : 'CPU WINS';
       ui.copy.textContent = win ? 'A perfect neon rally. Ready for another round?' : 'The CPU got there first. Give it another serve.';
@@ -168,19 +168,19 @@
     const dt = Math.min((time - lastTime) / 1000 || 0, .035); lastTime = time;
     update(dt); draw(); animation = requestAnimationFrame(loop);
   }
-  function start() { if (gameOver) resetMatch(); if (!match) { match = { difficulty, maxDeficit: 0, playTimeSeconds: 0, completed: false }; WebArcadeStats.pongStart(); WebArcadeAchievements.evaluate('start'); } running = true; paused = false; lastTime = performance.now(); ui.overlay.hidden = true; ui.pause.disabled = false; ui.pause.textContent = 'Pause'; }
-  function pause() { if (!running) return; paused = !paused; ui.pause.textContent = paused ? 'Resume' : 'Pause'; ui.overlay.hidden = !paused; if (paused) { ui.title.textContent = 'PAUSED'; ui.copy.textContent = 'Take a breath, then get back in the game.'; ui.action.textContent = 'Resume'; } else lastTime = performance.now(); }
+  function start() { document.body.dataset.pongActive = 'true'; if (gameOver) resetMatch(); if (!match) { match = { difficulty, maxDeficit: 0, playTimeSeconds: 0, completed: false }; WebArcadeStats.pongStart(); WebArcadeAchievements.evaluate('start'); } running = true; paused = false; lastTime = performance.now(); ui.overlay.hidden = true; ui.pause.disabled = false; ui.pause.textContent = 'Pause'; }
+  function pause() { if (!running) return; paused = !paused; document.body.dataset.pongActive = 'true'; ui.pause.textContent = paused ? 'Resume' : 'Pause'; ui.overlay.hidden = !paused; if (paused) { ui.title.textContent = 'PAUSED'; ui.copy.textContent = 'Take a breath, then get back in the game.'; ui.action.textContent = 'Resume'; } else lastTime = performance.now(); }
   function setPaddleFromPointer(event) { const rect = canvas.getBoundingClientRect(); const source = event.touches ? event.touches[0] : event; state.playerY = clamp((source.clientY - rect.top) * H / rect.height - paddle.h / 2, 0, H - paddle.h); }
 
   document.querySelectorAll('[data-level]').forEach(button => button.addEventListener('click', () => setDifficulty(button.dataset.level)));
   ui.action.addEventListener('click', start); ui.pause.addEventListener('click', pause);
-  ui.restart.addEventListener('click', () => { resetMatch(); running = false; paused = false; ui.pause.disabled = true; ui.overlay.hidden = false; ui.title.textContent = 'SERVE IT UP'; ui.copy.textContent = 'First to seven wins. Keep the rally alive.'; ui.action.textContent = 'Start game'; });
+  ui.restart.addEventListener('click', () => { document.body.dataset.pongActive = 'false'; resetMatch(); running = false; paused = false; ui.pause.disabled = true; ui.overlay.hidden = false; ui.title.textContent = 'SERVE IT UP'; ui.copy.textContent = 'First to seven wins. Keep the rally alive.'; ui.action.textContent = 'Start game'; });
   window.addEventListener('keydown', event => { const key = event.key.toLowerCase(); if (['w', 's', 'arrowup', 'arrowdown'].includes(key)) { keys.add(key); event.preventDefault(); } });
   window.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
   window.addEventListener('blur', () => keys.clear());
   document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) pause(); });
+  window.addEventListener('orientationchange', () => { if (running && !paused) pause(); });
   canvas.addEventListener('mousemove', setPaddleFromPointer); canvas.addEventListener('touchstart', event => { setPaddleFromPointer(event); event.preventDefault(); }, { passive: false }); canvas.addEventListener('touchmove', event => { setPaddleFromPointer(event); event.preventDefault(); }, { passive: false });
-  [['up', -1], ['down', 1]].forEach(([id, direction]) => { const button = document.getElementById(id); const key = direction === -1 ? 'arrowup' : 'arrowdown'; const startMove = event => { event.preventDefault(); keys.add(key); }; const stopMove = () => keys.delete(key); button.addEventListener('pointerdown', startMove); ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => button.addEventListener(type, stopMove)); });
+  [['up', -1], ['down', 1]].forEach(([id, direction]) => { const button = document.getElementById(id); const key = direction === -1 ? 'arrowup' : 'arrowdown'; const startMove = event => { event.preventDefault(); keys.add(key); }; const stopMove = event => { keys.delete(key); if (event && button.hasPointerCapture(event.pointerId)) button.releasePointerCapture(event.pointerId); }; button.addEventListener('pointerdown', event => { button.setPointerCapture(event.pointerId); startMove(event); }); ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => button.addEventListener(type, stopMove)); });
   setDifficulty(difficulty); resetBall(); draw(); animation = requestAnimationFrame(loop);
-  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('../../service-worker.js', { scope: '../../' }));
-})();
+  })();
