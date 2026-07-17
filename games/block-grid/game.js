@@ -1,0 +1,31 @@
+(() => {
+  'use strict';
+  const size = 8;
+  const pieces = [
+    [[0,0]], [[0,0],[1,0]], [[0,0],[0,1]], [[0,0],[1,0],[2,0]], [[0,0],[0,1],[0,2]],
+    [[0,0],[1,0],[0,1],[1,1]], [[0,0],[1,0],[2,0],[1,1]], [[0,0],[0,1],[1,1]],
+    [[0,0],[1,0],[2,0],[3,0]], [[0,0],[0,1],[0,2],[0,3]], [[0,0],[1,0],[0,1]],
+    [[0,0],[1,0],[2,0],[0,1],[0,2]], [[0,0],[1,0],[1,1],[1,2]]
+  ];
+  const colors = ['cyan', 'pink', 'lime', 'orange'];
+  const board = document.getElementById('board'), tray = document.getElementById('tray');
+  const scoreNode = document.getElementById('score'), bestNode = document.getElementById('best');
+  const message = document.getElementById('game-title'), overlay = document.getElementById('overlay');
+  let cells, grid, options, selected = null, cursor = { x: 0, y: 0 }, score = 0;
+  let best = Number(localStorage.getItem('webArcade.blockGrid.best') || 0);
+
+  const announce = text => { message.textContent = text; const status = document.querySelector('[data-announcements]'); if (status) status.textContent = text; };
+  const randomPiece = () => ({ cells: pieces[Math.floor(Math.random() * pieces.length)], color: colors[Math.floor(Math.random() * colors.length)] });
+  function drawBoard() { cells = []; board.innerHTML = ''; for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) { const cell = document.createElement('button'); cell.type = 'button'; cell.className = 'cell'; cell.dataset.x = x; cell.dataset.y = y; cell.setAttribute('role', 'gridcell'); cell.setAttribute('aria-label', `Row ${y + 1}, column ${x + 1}`); cell.addEventListener('click', () => place(x, y)); board.append(cell); cells.push(cell); } renderBoard(); }
+  const cellAt = (x, y) => cells[y * size + x];
+  function canPlace(piece, x, y) { return piece.cells.every(([dx, dy]) => x + dx < size && y + dy < size && !grid[y + dy][x + dx]); }
+  function renderBoard() { cells.forEach(cell => { const x = +cell.dataset.x, y = +cell.dataset.y; cell.className = 'cell' + (grid[y][x] ? ` filled ${grid[y][x]}` : '') + (x === cursor.x && y === cursor.y ? ' cursor' : ''); }); if (selected) { const valid = canPlace(selected, cursor.x, cursor.y); selected.cells.forEach(([dx,dy]) => { if (cursor.x + dx < size && cursor.y + dy < size) cellAt(cursor.x + dx, cursor.y + dy).classList.add(valid ? `preview ${selected.color}` : 'invalid'); }); } }
+  function renderTray() { tray.innerHTML = ''; options.forEach((piece, index) => { const button = document.createElement('button'); button.type = 'button'; button.className = 'piece' + (selected === piece ? ' selected' : ''); button.setAttribute('aria-pressed', selected === piece); button.setAttribute('aria-label', `Select piece ${index + 1}`); if (!piece.used) { const maxX = Math.max(...piece.cells.map(c => c[0])) + 1, maxY = Math.max(...piece.cells.map(c => c[1])) + 1; button.style.setProperty('--cols', maxX); button.style.setProperty('--rows', maxY); piece.cells.forEach(([x,y]) => { const block = document.createElement('i'); block.style.gridColumn = x + 1; block.style.gridRow = y + 1; block.className = piece.color; button.append(block); }); button.addEventListener('click', () => { selected = selected === piece ? null : piece; announce(selected ? 'Piece selected. Choose a square on the board.' : 'Choose a piece, then choose a square.'); renderTray(); renderBoard(); }); } else { button.disabled = true; button.classList.add('used'); button.setAttribute('aria-label', `Piece ${index + 1} used`); } tray.append(button); }); }
+  function clearLines() { const rows = [...Array(size).keys()].filter(y => grid[y].every(Boolean)); const cols = [...Array(size).keys()].filter(x => grid.every(row => row[x])); rows.forEach(y => grid[y].fill('')); cols.forEach(x => grid.forEach(row => row[x] = '')); return rows.length + cols.length; }
+  function place(x, y) { if (!selected) { announce('Choose a piece first.'); return; } if (!canPlace(selected, x, y)) { announce('That piece does not fit there. Try another square.'); return; } selected.cells.forEach(([dx, dy]) => grid[y + dy][x + dx] = selected.color); const placed = selected.cells.length; selected.used = true; selected = null; const lines = clearLines(); score += placed + lines * size * lines; scoreNode.textContent = score; if (score > best) { best = score; localStorage.setItem('webArcade.blockGrid.best', best); bestNode.textContent = best; } announce(lines ? `${lines} line${lines > 1 ? 's' : ''} cleared! Choose another piece.` : 'Nice placement. Choose another piece.'); if (options.every(piece => piece.used)) { options = [randomPiece(), randomPiece(), randomPiece()]; announce('Fresh pieces ready. Choose a piece.'); } renderTray(); renderBoard(); if (!hasMove()) endGame(); }
+  function hasMove() { return options.filter(p => !p.used).some(piece => [...Array(size)].some((_, y) => [...Array(size)].some((__, x) => canPlace(piece, x, y)))); }
+  function endGame() { document.getElementById('final-score').textContent = `You scored ${score} points. Best: ${best}.`; overlay.hidden = false; announce(`Game over. You scored ${score} points.`); }
+  function reset() { grid = Array.from({ length: size }, () => Array(size).fill('')); options = [randomPiece(), randomPiece(), randomPiece()]; selected = null; cursor = { x: 0, y: 0 }; score = 0; scoreNode.textContent = '0'; bestNode.textContent = best; overlay.hidden = true; announce('Choose a piece, then choose a square.'); drawBoard(); renderTray(); }
+  document.addEventListener('keydown', event => { if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)) { event.preventDefault(); cursor.x = Math.max(0, Math.min(size - 1, cursor.x + (event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0))); cursor.y = Math.max(0, Math.min(size - 1, cursor.y + (event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0))); renderBoard(); } if ((event.key === ' ' || event.key === 'Enter') && selected && document.activeElement.closest('.board, body')) { event.preventDefault(); place(cursor.x, cursor.y); } });
+  document.getElementById('restart').addEventListener('click', reset); document.getElementById('play-again').addEventListener('click', reset); reset();
+})();

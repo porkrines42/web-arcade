@@ -1,6 +1,6 @@
 # Web Arcade
 
-A lightweight, neon-styled collection of browser games built with plain HTML, CSS, and JavaScript. The first cabinet is a complete one-player Pong game, and the app can be installed for offline play after its first successful visit.
+A lightweight, neon-styled collection of browser games built with plain HTML, CSS, and JavaScript. The arcade includes one-player Pong and Block Grid, a satisfying block-placement puzzle, and can be installed for offline play after its first successful visit.
 
 ## Folder structure
 
@@ -13,12 +13,17 @@ A lightweight, neon-styled collection of browser games built with plain HTML, CS
 ├── shared/                    # Shared Settings Center, UI, and browser helpers
 ├── icons/icon.svg              # Self-contained installable-app icon
 └── games/
-    └── pong/                   # Pong HTML, styles, and game logic
+    ├── pong/                   # Pong HTML, styles, and game logic
+    └── block-grid/             # Block Grid HTML, styles, and game logic
 ```
 
 ## Play Pong
 
 Open the home page and select **Play** on the Pong card. Keep the ball in play with **W/S** or **Up/Down Arrow** keys. You can also move the paddle with the mouse, drag on a touch screen, or use the visible mobile Up and Down buttons. Select Easy, Normal, or Hard; the first player to 7 wins.
+
+## Play Block Grid
+
+Open **Block Grid** from the home page, select any of the three pieces, then choose where to place it on the 8 × 8 board. Complete horizontal or vertical lines to clear them. The board supports mouse, touch, and keyboard play: Tab to a piece, then move the board cursor with the arrow keys and place with Space or Enter. Your best score remains only in this browser.
 
 ## Settings Center
 
@@ -32,7 +37,7 @@ Pong records matches, points, win streaks, difficulty results, approximate activ
 
 Visit the deployed site once while online, then use the visible **Install app** button when your browser offers it. On iPhone or iPad, use Safari’s Share button and choose **Add to Home Screen**. The installed arcade opens in standalone mode and respects the device safe area. You can also save Pong directly to the home screen; its shortcut opens Pong, while the persistent **Back to Arcade** link returns to the complete game library.
 
-The first successful visit caches the arcade home page, Pong, Settings Center, statistics, achievements, icon, and their local supporting files. These saved pages continue to work offline; uncached destinations fall back to the home page instead of showing a browser error. Coming Soon cards remain informational and are not presented as offline games.
+The first successful visit caches the arcade home page, Pong, Block Grid, Settings Center, statistics, achievements, icon, and their local supporting files. These saved pages continue to work offline; uncached destinations fall back to the home page instead of showing a browser error. Coming Soon cards remain informational and are not presented as offline games.
 
 When a new release has downloaded, a small **An update is available** message appears. Choose **Update** to activate it and reload safely. A live Pong match is never reloaded automatically; finish or restart it first, then update.
 

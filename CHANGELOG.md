@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.11.0 — Block Grid
+
+- Added Block Grid, a touch- and keyboard-friendly neon block-placement puzzle with line clears and local best scores.
+- Added its arcade library card and offline cache coverage.
+
 ## Version 1.10.1 — Pong mobile layout refinement
 
 - Added a Back to Arcade button to the portrait rotation prompt.
