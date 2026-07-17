@@ -3,6 +3,7 @@
 ## Unreleased — Block Grid drag and drop
 
 - Added mouse and touch drag-and-drop placement for Block Grid pieces while retaining click and keyboard controls.
+- Fixed dragged pieces to follow the grabbed block, align their previews and drops to the board, and reset cleanly after cancelled or invalid drops.
 
 ## Version 1.11.0 — Block Grid
 
