@@ -116,7 +116,7 @@
 
   function moveDragPreview(clientX, clientY) {
     if (!drag.preview) return;
-    drag.preview.style.transform = `translate(${clientX - drag.pointerOffset.x}px, ${clientY - drag.pointerOffset.y}px)`;
+    drag.preview.style.transform = `translate3d(${clientX - drag.pointerOffset.x}px, ${clientY - drag.pointerOffset.y}px, 0)`;
   }
 
   function startDrag(event) {
@@ -207,19 +207,7 @@
           event.preventDefault();
           button.focus();
           drag = { pointerId: event.pointerId, piece, button, startX: event.clientX, startY: event.clientY, started: false, grab: nearestBlock(piece, button, event.clientX, event.clientY) };
-          button.setPointerCapture(event.pointerId);
         });
-        button.addEventListener('pointermove', event => {
-          if (!drag || event.pointerId !== drag.pointerId) return;
-          if (!drag.started && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 4) startDrag(event);
-          if (drag && drag.started) {
-            event.preventDefault();
-            updateDrag(event.clientX, event.clientY);
-          }
-        });
-        button.addEventListener('pointerup', finishDrag);
-        button.addEventListener('pointercancel', cancelDrag);
-        button.addEventListener('lostpointercapture', cancelDrag);
         button.addEventListener('click', event => {
           if (suppressPieceClick) {
             suppressPieceClick = false;
@@ -313,6 +301,16 @@
       place(cursor.x, cursor.y);
     }
   });
+  document.addEventListener('pointermove', event => {
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    if (!drag.started && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 4) startDrag(event);
+    if (drag && drag.started) {
+      event.preventDefault();
+      updateDrag(event.clientX, event.clientY);
+    }
+  }, { passive: false });
+  document.addEventListener('pointerup', finishDrag);
+  document.addEventListener('pointercancel', cancelDrag);
   document.getElementById('restart').addEventListener('click', reset);
   document.getElementById('play-again').addEventListener('click', reset);
   reset();
