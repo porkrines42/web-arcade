@@ -169,6 +169,15 @@
     drag = null;
   }
 
+  function abandonDrag(message) {
+    if (!drag) return;
+    const wasDragging = drag.started;
+    resetDrag();
+    if (wasDragging) announce(message);
+    renderTray();
+    renderBoard();
+  }
+
   function suppressFollowingPieceClick() {
     suppressPieceClick = true;
     window.setTimeout(() => { suppressPieceClick = false; }, 0);
@@ -229,7 +238,7 @@
           if ((event.pointerType === 'mouse' && event.button !== 0) || drag) return;
           event.preventDefault();
           button.focus();
-          drag = { pointerId: event.pointerId, piece, button, startX: event.clientX, startY: event.clientY, started: false, grab: nearestBlock(piece, button, event.clientX, event.clientY) };
+          drag = { pointerId: event.pointerId, pointerType: event.pointerType, piece, button, startX: event.clientX, startY: event.clientY, started: false, grab: nearestBlock(piece, button, event.clientX, event.clientY) };
           // Keep receiving movement and release events after leaving the tray
           // button, which makes touch and mouse drags reliable.
           button.setPointerCapture(event.pointerId);
@@ -344,6 +353,16 @@
   }, { passive: false });
   document.addEventListener('pointerup', finishDrag);
   document.addEventListener('pointercancel', cancelDrag);
+  // iOS can start a document scroll before a captured pointer has delivered its
+  // final movement event. Cancelling the matching touch move keeps the gesture
+  // owned by the piece, rather than leaving its fixed drag preview behind while
+  // the page scrolls.
+  document.addEventListener('touchmove', event => {
+    if (drag && drag.pointerType === 'touch') event.preventDefault();
+  }, { passive: false });
+  window.addEventListener('scroll', () => abandonDrag('Drag cancelled because the page moved. Try again on the board.'), { passive: true });
+  window.addEventListener('blur', () => abandonDrag('Drag cancelled. The piece returned to the tray.'));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) abandonDrag('Drag cancelled. The piece returned to the tray.'); });
   document.getElementById('restart').addEventListener('click', reset);
   document.getElementById('play-again').addEventListener('click', reset);
   reset();

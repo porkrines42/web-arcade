@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.11.4 — Block Grid touch-drag containment
+
+- Explicitly prevent the active touch gesture from becoming a page scroll while a Block Grid piece is being dragged.
+- Cancel and clean up an interrupted drag when the page, tab, or browser focus changes, so no detached piece can remain floating on screen.
+
 ## Version 1.11.3 — Block Grid mobile drop fix
 
 - Kept captured drags active until their pointer release is handled, so iPhone and iPad drops retain their board destination instead of being cancelled early.
