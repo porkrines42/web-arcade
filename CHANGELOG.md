@@ -1,9 +1,9 @@
 # Changelog
 
-## Version 1.11.5 — Block Grid cluster play
+## Version 1.11.6 — Restore Block Grid placement
 
-- Rebuilt Block Grid as a reliable tap, click, and keyboard cluster-clearing puzzle: matching groups disappear, then blocks fall and columns close together.
-- Added square-based scoring, local best-score persistence, clear in-game instructions, and responsive 10 × 10 board controls.
+- Restored the intended block-placement gameplay, including the three-piece tray and mouse, touch, and keyboard placement controls.
+- Restored line-clearing rules, the 8 × 8 board, landing previews, and the matching game instructions.
 
 ## Version 1.11.4 — Block Grid touch-drag containment
 
