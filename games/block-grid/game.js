@@ -185,6 +185,11 @@
 
   function finishDrag(event) {
     if (!drag || event.pointerId !== drag.pointerId) return;
+    finishDragAt(event.pointerId, event.clientX, event.clientY);
+  }
+
+  function finishDragAt(pointerId, clientX, clientY) {
+    if (!drag || pointerId !== drag.pointerId) return;
     const activeDrag = drag;
     if (!activeDrag.started) {
       resetDrag();
@@ -192,8 +197,8 @@
       suppressFollowingPieceClick();
       return;
     }
-    const position = updateDrag(event.clientX, event.clientY);
-    const returnedToTray = isPointIn(tray, event.clientX, event.clientY);
+    const position = updateDrag(clientX, clientY);
+    const returnedToTray = isPointIn(tray, clientX, clientY);
     resetDrag();
     suppressFollowingPieceClick();
     if (position && canPlace(selected, position.x, position.y)) place(position.x, position.y);
@@ -207,6 +212,11 @@
 
   function cancelDrag(event) {
     if (!drag || event.pointerId !== drag.pointerId) return;
+    cancelDragForPointer(event.pointerId);
+  }
+
+  function cancelDragForPointer(pointerId) {
+    if (!drag || pointerId !== drag.pointerId) return;
     const wasDragging = drag.started;
     resetDrag();
     if (wasDragging) announce('Drag cancelled. The piece returned to the tray.');
@@ -239,15 +249,11 @@
           event.preventDefault();
           button.focus();
           drag = { pointerId: event.pointerId, pointerType: event.pointerType, piece, button, startX: event.clientX, startY: event.clientY, started: false, grab: nearestBlock(piece, button, event.clientX, event.clientY) };
-          // Keep receiving movement and release events after leaving the tray
-          // button, which makes touch and mouse drags reliable.
-          button.setPointerCapture(event.pointerId);
+          // Touch-action on the source keeps the browser from scrolling while
+          // the piece is picked up. We deliberately do not use explicit
+          // pointer capture here: some mobile Safari versions can retain a
+          // captured touch after it ends, leaving the tray locked.
         });
-        // Pointer capture sends the release back to this button. Handling it
-        // here, as well as on the document below, prevents a captured mobile
-        // pointer from leaving the game in a dragging state after it is lifted.
-        button.addEventListener('pointerup', finishDrag);
-        button.addEventListener('pointercancel', cancelDrag);
         button.addEventListener('click', event => {
           if (suppressPieceClick) {
             suppressPieceClick = false;
@@ -360,6 +366,19 @@
   document.addEventListener('touchmove', event => {
     if (drag && drag.pointerType === 'touch') event.preventDefault();
   }, { passive: false });
+  // A few mobile browsers occasionally lose the matching PointerEvent after a
+  // drag has crossed another interactive element. Touch end/cancel are a
+  // second, independent cleanup path so a released piece can never lock the
+  // rest of the tray. Pointer handlers above remain the primary path.
+  document.addEventListener('touchend', event => {
+    if (!drag || drag.pointerType !== 'touch') return;
+    const touch = event.changedTouches[0];
+    if (touch) finishDragAt(drag.pointerId, touch.clientX, touch.clientY);
+  });
+  document.addEventListener('touchcancel', event => {
+    if (!drag || drag.pointerType !== 'touch') return;
+    if (event.changedTouches.length) cancelDragForPointer(drag.pointerId);
+  });
   window.addEventListener('scroll', () => abandonDrag('Drag cancelled because the page moved. Try again on the board.'), { passive: true });
   window.addEventListener('blur', () => abandonDrag('Drag cancelled. The piece returned to the tray.'));
   document.addEventListener('visibilitychange', () => { if (document.hidden) abandonDrag('Drag cancelled. The piece returned to the tray.'); });
