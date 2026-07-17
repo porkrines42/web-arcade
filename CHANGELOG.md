@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.14.0 — Patrol Chart vacation management and sharing
+
+- Replaced the add-only vacation action with a Vacation Manager that adds, edits, and deletes upcoming vacation days while retaining past vacation days on the calendar.
+- Added mobile month swiping while preserving desktop month-arrow controls, plus a share action that prepares a calendar image for a device share sheet or download.
+
 ## Version 1.13.0 — Patrol Chart mobile and notes
 
 - Made Patrol Chart install as its own standalone app, with Patrol Chart naming and a local officer icon instead of opening the arcade home page.
