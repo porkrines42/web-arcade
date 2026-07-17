@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Patrol Chart</title>
+  <desc id="desc">A dark blue app icon with the words Patrol Chart.</desc>
+  <defs>
+    <linearGradient id="background" x1="64" y1="48" x2="448" y2="472" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#182b5c"/>
+      <stop offset="1" stop-color="#08051b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="94" y1="0" x2="418" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22e6ff"/>
+      <stop offset="1" stop-color="#8a7dff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="104" fill="url(#background)"/>
+  <rect x="73" y="73" width="366" height="366" rx="56" fill="#0c1230" stroke="#314f91" stroke-width="4"/>
+  <path d="M117 170h278M117 256h278M117 342h278M170 117v278M256 117v278M342 117v278" stroke="#253d75" stroke-width="3" opacity=".72"/>
+  <rect x="108" y="143" width="296" height="226" rx="30" fill="#111c40" stroke="url(#accent)" stroke-width="6"/>
+  <path d="M146 209h220" stroke="#22e6ff" stroke-width="4" opacity=".62"/>
+  <text x="256" y="246" fill="#f7fbff" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700" letter-spacing="-2" text-anchor="middle">PATROL</text>
+  <text x="256" y="315" fill="#f5c84c" font-family="Arial, Helvetica, sans-serif" font-size="63" font-weight="700" letter-spacing="-1" text-anchor="middle">CHART</text>
+  <circle cx="144" cy="402" r="8" fill="#22e6ff"/>
+  <path d="M168 402h200" stroke="#8a7dff" stroke-linecap="round" stroke-width="8"/>
+</svg>
