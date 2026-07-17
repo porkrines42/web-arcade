@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const VERSION = '1.11.4';
+  const VERSION = '1.11.5';
   const SETTINGS_KEY = 'webArcade.settings';
   const PONG_KEY = 'webArcade.pong';
   const STATS_KEY = 'webArcade.stats';

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-arcade-v22';
+const CACHE_NAME = 'web-arcade-v23';
 const APP_FILES = ['./', 'index.html', 'styles.css', 'app.js', 'shared/arcade.css', 'shared/arcade.js', 'shared/stats.js', 'shared/achievements.js', 'manifest.webmanifest', 'icons/icon.svg', 'games/pong/', 'games/pong/index.html', 'games/pong/styles.css', 'games/pong/game.js', 'games/pong/manifest.webmanifest', 'games/block-grid/', 'games/block-grid/index.html', 'games/block-grid/styles.css', 'games/block-grid/game.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)));
