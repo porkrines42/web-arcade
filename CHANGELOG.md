@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.11.3 — Block Grid mobile drop fix
+
+- Kept captured drags active until their pointer release is handled, so iPhone and iPad drops retain their board destination instead of being cancelled early.
+- Restored dependable landing previews and valid placements for mouse and touch drags while preserving keyboard placement.
+
 ## Version 1.11.2 — Block Grid drag completion
 
 - Removed the initial board-cursor highlight until a keyboard move is made.
