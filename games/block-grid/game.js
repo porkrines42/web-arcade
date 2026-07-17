@@ -55,10 +55,14 @@
       cell.className = `cell${grid[y][x] ? ` filled ${grid[y][x]}` : ''}${x === cursor.x && y === cursor.y ? ' cursor' : ''}`;
     });
     if (!selected) return;
-    const valid = canPlace(selected, cursor.x, cursor.y);
+    // A selected piece follows the keyboard cursor. During a pointer drag, only
+    // show a landing preview while the pointer is actually over the board.
+    const previewPosition = drag ? drag.position : cursor;
+    if (!previewPosition) return;
+    const valid = canPlace(selected, previewPosition.x, previewPosition.y);
     selected.cells.forEach(([dx, dy]) => {
-      const x = cursor.x + dx;
-      const y = cursor.y + dy;
+      const x = previewPosition.x + dx;
+      const y = previewPosition.y + dy;
       if (x >= 0 && y >= 0 && x < size && y < size) cellAt(x, y).classList.add(valid ? `preview ${selected.color}` : 'invalid');
     });
   }
@@ -76,6 +80,11 @@
     const target = document.elementFromPoint(clientX, clientY);
     const cell = target && target.closest('.cell');
     return cell && board.contains(cell) ? { x: +cell.dataset.x, y: +cell.dataset.y } : null;
+  }
+
+  function isPointIn(element, clientX, clientY) {
+    const rect = element.getBoundingClientRect();
+    return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
   }
 
   function nearestBlock(piece, button, clientX, clientY) {
@@ -122,6 +131,7 @@
   function startDrag(event) {
     drag.started = true;
     selected = drag.piece;
+    drag.position = null;
     drag.button.classList.add('dragging', 'selected');
     createDragPreview(drag.piece, drag.grab);
     document.body.classList.add('dragging-piece');
@@ -134,10 +144,15 @@
     if (!drag || !drag.started) return null;
     moveDragPreview(clientX, clientY);
     const pointedCell = boardCellFromPoint(clientX, clientY);
-    if (!pointedCell) return null;
+    if (!pointedCell) {
+      drag.position = null;
+      renderBoard();
+      return null;
+    }
     cursor = { x: pointedCell.x - drag.grab.x, y: pointedCell.y - drag.grab.y };
+    drag.position = cursor;
     renderBoard();
-    return cursor;
+    return drag.position;
   }
 
   function resetDrag() {
@@ -163,11 +178,13 @@
       return;
     }
     const position = updateDrag(event.clientX, event.clientY);
+    const returnedToTray = isPointIn(tray, event.clientX, event.clientY);
     resetDrag();
     suppressFollowingPieceClick();
     if (position && canPlace(selected, position.x, position.y)) place(position.x, position.y);
     else {
-      announce(position ? 'That piece does not fit there. It returned to the tray.' : 'Drop the piece on a square on the board.');
+      selected = null;
+      announce(returnedToTray ? 'Piece returned to the tray.' : position ? 'That piece does not fit there. It returned to the tray.' : 'Piece returned to the tray.');
       renderTray();
       renderBoard();
     }
@@ -207,6 +224,9 @@
           event.preventDefault();
           button.focus();
           drag = { pointerId: event.pointerId, piece, button, startX: event.clientX, startY: event.clientY, started: false, grab: nearestBlock(piece, button, event.clientX, event.clientY) };
+          // Keep receiving movement and release events after leaving the tray
+          // button, which makes touch and mouse drags reliable.
+          button.setPointerCapture(event.pointerId);
         });
         button.addEventListener('click', event => {
           if (suppressPieceClick) {
