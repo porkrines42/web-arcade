@@ -239,7 +239,6 @@
         // pointer from leaving the game in a dragging state after it is lifted.
         button.addEventListener('pointerup', finishDrag);
         button.addEventListener('pointercancel', cancelDrag);
-        button.addEventListener('lostpointercapture', cancelDrag);
         button.addEventListener('click', event => {
           if (suppressPieceClick) {
             suppressPieceClick = false;
