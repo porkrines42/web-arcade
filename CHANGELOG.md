@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Block Grid drag and drop
+
+- Added mouse and touch drag-and-drop placement for Block Grid pieces while retaining click and keyboard controls.
+
 ## Version 1.11.0 — Block Grid
 
 - Added Block Grid, a touch- and keyboard-friendly neon block-placement puzzle with line clears and local best scores.
