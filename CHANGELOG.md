@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.11.1 — Block Grid drag reliability
+
+- Captured active pointers from a tray piece so mouse and touch drags continue smoothly beyond the source button and release reliably.
+- Showed landing previews only while a dragged piece is over the board, and let players return a piece to the tray without placing it.
+
 ## Unreleased — Block Grid drag and drop
 
 - Added mouse and touch drag-and-drop placement for Block Grid pieces while retaining click and keyboard controls.
