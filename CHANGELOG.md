@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.12.0 — Patrol Chart
+
+- Added Patrol Chart, a private, offline monthly patrol calendar with month and year navigation.
+- Added configurable 5-on, alternating 2- and 3-day-off rotations, plus local vacation-day marking.
+- Added the Patrol Chart library card and offline cache coverage.
+
 ## Version 1.11.7 — Block Grid tap placement reliability
 
 - Select a Block Grid piece as soon as it is touched or pressed, so players can reliably tap a piece and then tap a board square even when a mobile browser misses its matching pointer-release event.
