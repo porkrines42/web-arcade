@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.13.0 — Patrol Chart mobile and notes
+
+- Made Patrol Chart install as its own standalone app, with Patrol Chart naming and a local officer icon instead of opening the arcade home page.
+- Kept the patrol schedule, vacation spans, and per-date notes in local browser storage; vacation spans preserve regular red days off.
+- Moved Day 1 setup and vacation selection into compact dialogs, added editable and deletable date notes, and refined the phone layout to keep the calendar actions readily available.
+
 ## Version 1.12.0 — Patrol Chart
 
 - Added Patrol Chart, a private, offline monthly patrol calendar with month and year navigation.
