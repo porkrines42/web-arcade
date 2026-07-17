@@ -15,7 +15,7 @@
   const bestNode = document.getElementById('best');
   const message = document.getElementById('game-title');
   const overlay = document.getElementById('overlay');
-  let cells, grid, options, selected = null, cursor = { x: 0, y: 0 }, score = 0, drag = null, suppressPieceClick = false;
+  let cells, grid, options, selected = null, cursor = null, score = 0, drag = null, suppressPieceClick = false;
   let best = Number(localStorage.getItem('webArcade.blockGrid.best') || 0);
 
   const announce = text => {
@@ -52,7 +52,7 @@
     cells.forEach(cell => {
       const x = +cell.dataset.x;
       const y = +cell.dataset.y;
-      cell.className = `cell${grid[y][x] ? ` filled ${grid[y][x]}` : ''}${x === cursor.x && y === cursor.y ? ' cursor' : ''}`;
+      cell.className = `cell${grid[y][x] ? ` filled ${grid[y][x]}` : ''}${cursor && x === cursor.x && y === cursor.y ? ' cursor' : ''}`;
     });
     if (!selected) return;
     // A selected piece follows the keyboard cursor. During a pointer drag, only
@@ -77,9 +77,15 @@
   function boardCellFromPoint(clientX, clientY) {
     const boardRect = board.getBoundingClientRect();
     if (clientX < boardRect.left || clientX > boardRect.right || clientY < boardRect.top || clientY > boardRect.bottom) return null;
-    const target = document.elementFromPoint(clientX, clientY);
-    const cell = target && target.closest('.cell');
-    return cell && board.contains(cell) ? { x: +cell.dataset.x, y: +cell.dataset.y } : null;
+    // Use the board geometry instead of elementFromPoint(). A captured pointer
+    // can still report the source tray button as its target on mobile browsers,
+    // even while it is visually over a board cell.
+    const firstCell = cellAt(0, 0).getBoundingClientRect();
+    const nextColumn = cellAt(1, 0).getBoundingClientRect();
+    const nextRow = cellAt(0, 1).getBoundingClientRect();
+    const column = Math.floor((clientX - firstCell.left) / (nextColumn.left - firstCell.left));
+    const row = Math.floor((clientY - firstCell.top) / (nextRow.top - firstCell.top));
+    return column >= 0 && column < size && row >= 0 && row < size ? { x: column, y: row } : null;
   }
 
   function isPointIn(element, clientX, clientY) {
@@ -228,6 +234,12 @@
           // button, which makes touch and mouse drags reliable.
           button.setPointerCapture(event.pointerId);
         });
+        // Pointer capture sends the release back to this button. Handling it
+        // here, as well as on the document below, prevents a captured mobile
+        // pointer from leaving the game in a dragging state after it is lifted.
+        button.addEventListener('pointerup', finishDrag);
+        button.addEventListener('pointercancel', cancelDrag);
+        button.addEventListener('lostpointercapture', cancelDrag);
         button.addEventListener('click', event => {
           if (suppressPieceClick) {
             suppressPieceClick = false;
@@ -299,7 +311,7 @@
     grid = Array.from({ length: size }, () => Array(size).fill(''));
     options = [randomPiece(), randomPiece(), randomPiece()];
     selected = null;
-    cursor = { x: 0, y: 0 };
+    cursor = null;
     score = 0;
     scoreNode.textContent = '0';
     bestNode.textContent = best;
@@ -312,12 +324,14 @@
   document.addEventListener('keydown', event => {
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
       event.preventDefault();
+      cursor = cursor || { x: 0, y: 0 };
       cursor.x = Math.max(0, Math.min(size - 1, cursor.x + (event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0)));
       cursor.y = Math.max(0, Math.min(size - 1, cursor.y + (event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0)));
       renderBoard();
     }
     if ((event.key === ' ' || event.key === 'Enter') && selected && document.activeElement.closest('.board, body')) {
       event.preventDefault();
+      cursor = cursor || { x: 0, y: 0 };
       place(cursor.x, cursor.y);
     }
   });

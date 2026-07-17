@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.11.2 — Block Grid drag completion
+
+- Removed the initial board-cursor highlight until a keyboard move is made.
+- Calculate dragged-piece destinations from the board geometry and finish captured pointer releases on their source piece, preventing stuck drags on mobile.
+
 ## Version 1.11.1 — Block Grid drag reliability
 
 - Captured active pointers from a tray piece so mouse and touch drags continue smoothly beyond the source button and release reliably.
