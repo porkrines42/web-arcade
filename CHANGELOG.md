@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.11.7 — Block Grid tap placement reliability
+
+- Select a Block Grid piece as soon as it is touched or pressed, so players can reliably tap a piece and then tap a board square even when a mobile browser misses its matching pointer-release event.
+- Made selecting an already selected piece idempotent instead of deselecting it, preserving an available piece until it is placed or another piece is chosen.
+
 ## Version 1.11.6 — Restore Block Grid placement
 
 - Restored the intended block-placement gameplay, including the three-piece tray and mouse, touch, and keyboard placement controls.

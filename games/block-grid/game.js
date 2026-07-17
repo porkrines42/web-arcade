@@ -68,8 +68,11 @@
   }
 
   function selectPiece(piece) {
-    selected = selected === piece ? null : piece;
-    announce(selected ? 'Piece selected. Choose a square on the board, or drag the piece there.' : 'Choose a piece, then choose a square.');
+    // Selecting is intentionally idempotent. Some touch browsers deliver a
+    // click without the matching pointer-up after a short tap; toggling here
+    // would immediately deselect the piece and leave the board unusable.
+    selected = piece;
+    announce('Piece selected. Choose a square on the board, or drag the piece there.');
     renderTray();
     renderBoard();
   }
@@ -193,7 +196,10 @@
     const activeDrag = drag;
     if (!activeDrag.started) {
       resetDrag();
-      selectPiece(activeDrag.piece);
+      // The piece is selected on pointer-down so a missing pointer-up cannot
+      // prevent tap-then-board placement. Keep that selection on release.
+      selected = activeDrag.piece;
+      announce('Piece selected. Choose a square on the board, or drag the piece there.');
       suppressFollowingPieceClick();
       return;
     }
@@ -248,6 +254,19 @@
           if ((event.pointerType === 'mouse' && event.button !== 0) || drag) return;
           event.preventDefault();
           button.focus();
+          // Make tap-then-board placement available immediately. Dragging is
+          // still activated only after the pointer moves beyond the threshold.
+          selected = piece;
+          announce('Piece selected. Choose a square on the board, or drag the piece there.');
+          tray.querySelectorAll('.piece.selected').forEach(other => {
+            if (other !== button) {
+              other.classList.remove('selected');
+              other.setAttribute('aria-pressed', 'false');
+            }
+          });
+          button.classList.add('selected');
+          button.setAttribute('aria-pressed', 'true');
+          renderBoard();
           drag = { pointerId: event.pointerId, pointerType: event.pointerType, piece, button, startX: event.clientX, startY: event.clientY, started: false, grab: nearestBlock(piece, button, event.clientX, event.clientY) };
           // Touch-action on the source keeps the browser from scrolling while
           // the piece is picked up. We deliberately do not use explicit
